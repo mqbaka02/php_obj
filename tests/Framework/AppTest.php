@@ -1,15 +1,16 @@
 <?php
 namespace Tests\Framework;
 
-use PHPUnit\Framework\TestCase;
 use Framework\App;
+use GuzzleHttp\Psr7\ServerRequest;
+use PHPUnit\Framework\TestCase;
 
 class AppTest extends TestCase {
     public function testRedirectTrainningSlash(){
         $app= new App();
-        $request= new Request('/azazazaz/');
+        $request= new ServerRequest('GET', '/demoslash/');
         $response= $app->run($request);
-        $this->assertEquals('/azazazaz', $response->getHearer('Location'));
+        $this->assertEquals('/demoslash', $response->getHeader('Location'));
         $this->assertEquals(301, $response->getStatus());
     }
 }
