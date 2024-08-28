@@ -57,5 +57,22 @@ class RouterTest extends TestCase
         $this->assertEquals('post.show', $route->getName());
         $this->assertEquals('hello', call_user_func_array($route->getCallable(), [$request]));
         $this->assertEquals(['slug'=> 'my-slug', 'id'=> '8'], $route->getParams());
+
+        //Invalid URL test
+        $route= $this->router->match(new ServerRequest('GET', '/blog/my_slug-8'));
+        var_dump($route);
+        $this->assertEquals(null, $route);
+    }
+
+    public function testGenerateUri()
+    {
+        $this->router->get('/blog', function () {
+            return 'azaz';
+        }, 'posts');
+        $this->router->get('/blog/{slug:[a-z0-9\-]+}-{id:\d+}', function () {
+            return 'hello';
+        }, 'post.show');
+        $uri= $this->router->generateUri('post.show', ['slug'=> 'my-post', 'id'=> 18]);
+        $this->assertEquals('/blog/my-post-18', $uri);
     }
 }
