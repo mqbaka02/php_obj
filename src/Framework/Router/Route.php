@@ -10,7 +10,7 @@ class Route
     /**
      * @var string
      */
-    public $name;
+    private $name;
     /**
      * @var callable
      */

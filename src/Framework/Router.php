@@ -3,7 +3,7 @@ namespace Framework;
 
 use Framework\Router\Route;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Expressive\Router\FastRouteRouter;
+use Framework\MqbakaFastRouteRouter;
 use Zend\Expressive\Router\Route as ZendRoute;
 
 /**
@@ -13,13 +13,14 @@ use Zend\Expressive\Router\Route as ZendRoute;
 class Router
 {
     /**
-     * @var FastRouteRouter
+     * @var MqbakaFastRouteRouter
      */
     private $router;
 
     public function __construct()
     {
-        $this->router = new FastRouteRouter();
+        // $this->router = new FastRouteRouter();
+        $this->router = new MqbakaFastRouteRouter();
     }
 
     /**
@@ -41,6 +42,7 @@ class Router
     public function match(ServerRequestInterface $request): ?Route
     {
         $result = $this->router->match($request);
+        // var_dump($result);
         if ($result->isSuccess()) {
             return new Route(
                 $result->getMatchedRouteName(),

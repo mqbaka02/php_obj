@@ -3,7 +3,6 @@
 namespace Tests\Framework;
 
 use Framework\Router;
-use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\ServerRequest;
 use PHPUnit\Framework\TestCase;
 
@@ -22,13 +21,12 @@ class RouterTest extends TestCase
     public function testGetMethod()
     {
         $request= new ServerRequest('GET', '/blog');
-        // $request= new ServerRequest('GET', '/blog');
         $this->router->get('/blog', function () {
             return 'hello';
         }, 'blog');
 
         $route= $this->router->match($request);
-        // var_dump($route->name);
+        // var_dump($route->getName());
         $this->assertEquals('blog', $route->getName());
         $this->assertEquals('hello', call_user_func_array($route->getCallable(), [$request]));
     }
