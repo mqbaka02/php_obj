@@ -8,7 +8,17 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class App
 {
+    /**
+     * List of modules
+     * @var array
+     */
     private $modules= [];
+
+    /**
+     * Router
+     * @var Router
+     */
+    private $router= null;
 
     /**
      * App constructor
@@ -16,8 +26,9 @@ class App
      */
     public function __construct(array $modules = [])
     {
+        $this->router= new Router();
         foreach ($modules as $module) {
-            $this->modules[]= new $module();
+            $this->modules[]= new $module($this->router);
         }
     }
 
@@ -29,15 +40,20 @@ class App
             $response = $response->withStatus(301);
             $response = $response->withHeader('Location', substr($uri, 0, -1));
             return $response;
+        }
 
-            // header('Location: ' . substr($uri, 0, -1));
-            // header('HTTP/1.1 301 Moved Permanently');
-            // exit();
+        $route= $this->router->match($request);
+
+        if (is_null($route)) {
+            return new Response(404, [], "<h1>404 error.</h1>");
         }
-        if ($uri === '/blog') {
-            return (new Response(200, [], 'Hello.'));
+        $response= call_user_func_array($route->getCallable(), [$request]);
+        if (is_string($response)) {
+            return new Response(200, [], $response);
+        } elseif ($response instanceof ResponseInterface) {
+            return $response;
+        } else {
+            throw new \Exception("The response is nor a string nor an instance of ResponseInterface.");
         }
-        $response = new Response(404, [], "404 error.");
-        return $response;
     }
 }
